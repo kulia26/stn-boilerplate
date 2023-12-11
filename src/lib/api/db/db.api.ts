@@ -4,16 +4,6 @@ const prisma = new PrismaClient();
 
 // Queries
 
-export const getMockUser = async (): Promise<User> =>
-  prisma.user.findUnique({
-    where: {
-      email: process.env.SEED_USER_EMAIL,
-    },
-  }) as Promise<User>;
-
-export const getMockUserId = async (): Promise<string> =>
-  getMockUser().then((user) => user?.id ?? '');
-
 export const getChatsList = async (userId: string): Promise<Chat[]> =>
   prisma.chat
     .findMany({
@@ -235,3 +225,38 @@ export const deleteChatById = async (chatId: string): Promise<Chat> =>
       id: chatId,
     },
   });
+
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  return user;
+};
+
+export const gerUserIdByEmail = async (email: string): Promise<string | null> => {
+  const user = await getUserByEmail(email);
+
+  return user?.id ?? null;
+};
+
+export const createUser = async (
+  data: Pick<Prisma.UserCreateInput, 'email' | 'password'>,
+): Promise<Omit<User, 'password'>> => {
+  const user = await prisma.user.create({
+    data,
+    select: {
+      id: true,
+      email: true,
+      chats: true,
+      categories: true,
+      messages: true,
+      name: true,
+      password: false,
+    },
+  });
+
+  return user;
+};
