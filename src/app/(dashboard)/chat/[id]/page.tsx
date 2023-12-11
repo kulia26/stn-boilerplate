@@ -9,12 +9,11 @@ interface Props {
   };
 }
 
-const cookiesList = cookies()
-  .getAll()
-  .map(({ name, value }) => `${name}=${value}`)
-  .join(';');
-
 const Page: NextPage<Props> = async ({ params }) => {
+  const cookiesList = cookies()
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join(';');
   const chat = await fetch(`${process.env.APP_HOST}/api/chats/${params.id}`, {
     cache: 'no-store',
     headers: { Cookie: cookiesList },

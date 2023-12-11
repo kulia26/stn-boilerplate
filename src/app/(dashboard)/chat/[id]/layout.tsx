@@ -10,16 +10,15 @@ interface LayoutProps {
   };
 }
 
-const cookiesList = cookies()
-  .getAll()
-  .map(({ name, value }) => `${name}=${value}`)
-  .join(';');
-
 export const generateMetadata = async ({
   params,
 }: {
   params: { id: string };
 }): Promise<Metadata> => {
+  const cookiesList = cookies()
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join(';');
   const chat = await fetch(`${process.env.APP_HOST}/api/chats/${params.id}`, {
     headers: { Cookie: cookiesList },
   }).then((res) => res.json());
@@ -30,6 +29,10 @@ export const generateMetadata = async ({
 };
 
 const Layout: NextPage<LayoutProps> = async ({ children, params }) => {
+  const cookiesList = cookies()
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join(';');
   const chat = await fetch(`${process.env.APP_HOST}/api/chats/${params.id}`, {
     headers: { Cookie: cookiesList },
   }).then((res) => res.json());

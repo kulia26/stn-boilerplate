@@ -8,12 +8,11 @@ import { TBody, THead, Table, Td, Tr } from '@stn-ui/table';
 import { ChatListActions } from './chat-list-actions';
 import styles from './chat-list.module.scss';
 
-const cookiesList = cookies()
-  .getAll()
-  .map(({ name, value }) => `${name}=${value}`)
-  .join(';');
-
 export const ChatList: FC = async () => {
+  const cookiesList = cookies()
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join(';');
   const chatsPromise = await fetch(`${process.env.APP_HOST}/api/chats`, {
     headers: { Cookie: cookiesList },
   }).then((res) => res.json() ?? []);
