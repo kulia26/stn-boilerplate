@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata, NextPage } from 'next';
-import { headers } from 'next/headers';
+import { cookies } from 'next/headers';
 import { ChatLayout } from '@stn-ui/layout';
 
 interface LayoutProps {
@@ -10,13 +10,18 @@ interface LayoutProps {
   };
 }
 
+const cookiesList = cookies()
+  .getAll()
+  .map(({ name, value }) => `${name}=${value}`)
+  .join(';');
+
 export const generateMetadata = async ({
   params,
 }: {
   params: { id: string };
 }): Promise<Metadata> => {
   const chat = await fetch(`${process.env.APP_HOST}/api/chats/${params.id}`, {
-    headers: headers(),
+    headers: { Cookie: cookiesList },
   }).then((res) => res.json());
 
   return {
@@ -26,7 +31,7 @@ export const generateMetadata = async ({
 
 const Layout: NextPage<LayoutProps> = async ({ children, params }) => {
   const chat = await fetch(`${process.env.APP_HOST}/api/chats/${params.id}`, {
-    headers: headers(),
+    headers: { Cookie: cookiesList },
   }).then((res) => res.json());
   return <ChatLayout title={chat.title}>{children}</ChatLayout>;
 };
